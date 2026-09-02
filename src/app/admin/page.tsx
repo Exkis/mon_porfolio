@@ -21,7 +21,11 @@ export default function AdminPage() {
     return true;
   }
 
-  useEffect(() => { loadStats().finally(() => setLoading(false)); }, []);
+  useEffect(() => {
+    let mounted = true;
+    loadStats().finally(() => { if (mounted) setLoading(false); });
+    return () => { mounted = false; };
+  }, []);
 
   async function login(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();

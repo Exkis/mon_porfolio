@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 import { DM_Mono, Manrope, Playfair_Display } from "next/font/google";
 import "./globals.css";
 
@@ -23,7 +24,7 @@ export const metadata: Metadata = {
   description: "Portfolio d'Excellence Kisengo, développeur freelance spécialisé en Data Science, Machine Learning, Intelligence Artificielle et développement web.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="fr" className={`${manrope.variable} ${playfair.variable} ${dmMono.variable} h-full antialiased`}>
       <body className="min-h-full">{children}</body>
