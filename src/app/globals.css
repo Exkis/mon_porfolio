@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f4f1eb;
+  --foreground: #20211e;
+  --ink: #20211e;
+  --muted: #777871;
+  --line: #d8d4cc;
+  --accent: #d5f45b;
+  --orange: #ed704b;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-manrope);
+  --font-serif: var(--font-playfair);
+  --font-mono: var(--font-dm-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-manrope), sans-serif;
+  overflow-x: hidden;
+}
+
+::selection { background: var(--accent); color: var(--ink); }
+.grid-paper { background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px); background-size: 42px 42px; background-position: center center; }
+.display { font-family: var(--font-playfair), serif; }
+.mono { font-family: var(--font-dm-mono), monospace; }
+.reveal { animation: reveal 800ms cubic-bezier(.2,.8,.2,1) both; }
+.reveal-delay { animation-delay: 140ms; }
+@keyframes reveal { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: translateY(0); } }
+.marquee { animation: marquee 24s linear infinite; }
+@keyframes marquee { to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .reveal, .marquee { animation: none; } }
