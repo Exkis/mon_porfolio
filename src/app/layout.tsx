@@ -19,8 +19,8 @@ const dmMono = DM_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Noé Martin — Product designer & developer",
-  description: "Portfolio de Noé Martin, designer produit et développeur indépendant.",
+  title: "Excellence Kisengo — Data Science, IA & développement web",
+  description: "Portfolio d'Excellence Kisengo, développeur freelance spécialisé en Data Science, Machine Learning, Intelligence Artificielle et développement web.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
