@@ -31,7 +31,11 @@ export default function AdminPage() {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const response = await fetch("/api/auth/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: data.get("email"), password: data.get("password") }) });
-    if (!response.ok) { setError("Email ou mot de passe incorrect."); return; }
+    if (!response.ok) {
+      const result = await response.json().catch(() => null) as { error?: string } | null;
+      setError(result?.error ?? "Email ou mot de passe incorrect.");
+      return;
+    }
     setError("");
     await loadStats();
   }
