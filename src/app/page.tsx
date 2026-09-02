@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 
 const skills = ["Python", "SQL", "Pandas", "Scikit-learn", "TensorFlow", "PyTorch", "FastAPI", "TypeScript", "React", "Next.js", "PostgreSQL", "Docker"];
 const services = [
@@ -9,10 +9,21 @@ const services = [
   ["03", "Intelligence Artificielle", "Prototyper et intégrer des solutions IA dans vos produits et processus."],
   ["04", "Développement web", "Construire des applications web rapides, accessibles et maintenables."],
 ];
+type Project = { id: string; title: string; summary: string; description: string; tags: string[] };
+type Article = { id: string; title: string; excerpt: string; publishedAt: string | null };
 
 export default function Home() {
   const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [articles, setArticles] = useState<Article[]>([]);
+
+  useEffect(() => {
+    Promise.all([fetch("/api/projects").then((response) => response.ok ? response.json() : []), fetch("/api/articles").then((response) => response.ok ? response.json() : [])]).then(([loadedProjects, loadedArticles]) => {
+      setProjects(loadedProjects);
+      setArticles(loadedArticles);
+    });
+  }, []);
 
   async function submitContact(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -34,9 +45,9 @@ export default function Home() {
 
     <section id="services" className="px-5 py-24 md:px-12 md:py-32"><div className="mb-12 flex items-end justify-between border-b border-[var(--line)] pb-5"><div><p className="mono mb-4 text-xs text-[var(--blue)]">03 / Services</p><h2 className="text-5xl font-semibold leading-none tracking-[-.04em] md:text-7xl">Comment je peux<br />vous aider.</h2></div></div><div className="grid md:grid-cols-4">{services.map(([number, title, text]) => <article key={number} className="border-b border-[var(--line)] py-6 md:border-b-0 md:border-l md:px-6 md:first:border-l-0 md:first:pl-0"><span className="mono text-xs text-[var(--blue)]">{number}</span><h3 className="mt-14 text-xl font-semibold">{title}</h3><p className="mt-4 text-sm leading-6 text-[#66727d]">{text}</p></article>)}</div></section>
 
-    <section id="projects" className="bg-[#e8eef3] px-5 py-24 md:px-12 md:py-32"><div className="grid gap-12 md:grid-cols-[.8fr_1.2fr] md:items-end"><div><p className="mono mb-5 text-xs text-[var(--blue)]">04 / Projets</p><h2 className="text-5xl font-semibold leading-[.95] tracking-[-.04em] md:text-7xl">Vos projets<br />ici.</h2></div><div className="border-l-2 border-[var(--blue)] pl-6 text-sm leading-7 text-[#52606d]"><p>Cette section sera alimentée depuis votre espace administrateur. Ajoutez vos études de cas, technologies et résultats dans le dashboard.</p><p className="mono mt-5 text-xs text-[var(--blue)]">CONTENU GÉRÉ DANS /ADMIN</p></div></div></section>
+    <section id="projects" className="bg-[#e8eef3] px-5 py-24 md:px-12 md:py-32"><div className="mb-12 flex items-end justify-between border-b border-[var(--line)] pb-5"><div><p className="mono mb-5 text-xs text-[var(--blue)]">04 / Projets</p><h2 className="text-5xl font-semibold leading-[.95] tracking-[-.04em] md:text-7xl">Projets<br />publiés.</h2></div><span className="mono text-xs text-[#52606d]">{projects.length} projet{projects.length > 1 ? "s" : ""}</span></div>{projects.length === 0 ? <p className="max-w-xl text-sm leading-7 text-[#52606d]">Aucun projet publié pour le moment. Ajoutez vos études de cas depuis le dashboard administrateur.</p> : <div className="grid gap-6 md:grid-cols-2">{projects.map((project) => <article key={project.id} className="border border-[var(--line)] bg-[#f5f7f9] p-6"><p className="mono text-xs text-[var(--blue)]">PROJET</p><h3 className="mt-8 text-2xl font-semibold">{project.title}</h3><p className="mt-3 text-sm leading-6 text-[#52606d]">{project.summary}</p><p className="mt-5 mono text-[10px] text-[#52606d]">{project.tags.join(" · ")}</p></article>)}</div>}</section>
 
-    <section id="blog" className="px-5 py-24 md:px-12 md:py-32"><div className="mb-12 border-b border-[var(--line)] pb-5"><p className="mono mb-4 text-xs text-[var(--blue)]">05 / Blog</p><h2 className="text-5xl font-semibold tracking-[-.04em] md:text-7xl">Articles à venir.</h2></div><p className="max-w-xl text-sm leading-7 text-[#66727d]">Publiez vos réflexions sur la data, l'IA et le développement web depuis le dashboard administrateur.</p></section>
+    <section id="blog" className="px-5 py-24 md:px-12 md:py-32"><div className="mb-12 border-b border-[var(--line)] pb-5"><p className="mono mb-4 text-xs text-[var(--blue)]">05 / Blog</p><h2 className="text-5xl font-semibold tracking-[-.04em] md:text-7xl">Articles<br />publiés.</h2></div>{articles.length === 0 ? <p className="max-w-xl text-sm leading-7 text-[#66727d]">Aucun article publié pour le moment. Publiez vos réflexions sur la data, l'IA et le développement web depuis le dashboard.</p> : <div className="divide-y divide-[var(--line)]">{articles.map((article) => <article key={article.id} className="py-6"><h3 className="text-xl font-semibold">{article.title}</h3><p className="mt-2 text-sm leading-6 text-[#66727d]">{article.excerpt}</p></article>)}</div>}</section>
 
     <section id="contact" className="bg-[#0d1117] px-5 py-24 text-white md:px-12 md:py-32"><div className="grid gap-14 md:grid-cols-[1fr_1fr]"><div><p className="mono mb-5 text-xs text-[var(--cyan)]">06 / Contact</p><h2 className="text-6xl font-semibold leading-[.9] tracking-[-.06em] md:text-8xl">Construisons<br /><span className="text-[var(--cyan)]">quelque chose.</span></h2><div className="mt-12 space-y-3 text-sm text-[#aab3bd]"><a className="block hover:text-white" href="mailto:excellencekisengo000@gmail.com">excellencekisengo000@gmail.com ↗</a><a className="block hover:text-white" href="https://github.com/Exkis" target="_blank" rel="noreferrer">GitHub ↗</a><a className="block hover:text-white" href="https://www.linkedin.com/in/excellence-kisengo-5a9a1935a" target="_blank" rel="noreferrer">LinkedIn ↗</a><a className="block hover:text-white" href="https://wa.me/243822074574" target="_blank" rel="noreferrer">WhatsApp · +243 822 074 574 ↗</a></div></div><form className="space-y-5" onSubmit={submitContact}><label className="block text-xs uppercase tracking-[.12em] text-[#aab3bd]">Nom<input name="name" required className="mt-2 w-full border-b border-[#405363] bg-transparent py-3 outline-none focus:border-[var(--cyan)]" /></label><label className="block text-xs uppercase tracking-[.12em] text-[#aab3bd]">Email<input name="email" required type="email" className="mt-2 w-full border-b border-[#405363] bg-transparent py-3 outline-none focus:border-[var(--cyan)]" /></label><label className="block text-xs uppercase tracking-[.12em] text-[#aab3bd]">Message<textarea name="message" required rows={4} className="mt-2 w-full resize-none border-b border-[#405363] bg-transparent py-3 outline-none focus:border-[var(--cyan)]" /></label>{error && <p className="text-sm text-[#ff907a]">{error}</p>}<button className="bg-[var(--cyan)] px-6 py-4 text-sm font-semibold text-[#0d1117]">{sent ? "Message envoyé ✓" : "Envoyer ↗"}</button></form></div></section>
     <footer className="flex justify-between bg-[#0d1117] px-5 py-7 text-xs text-[#71808d] md:px-12"><span>© 2026 Excellence Kisengo</span><a href="#home">Retour en haut ↑</a></footer>
